@@ -62,14 +62,14 @@ func TestGenerousTitForTat_Play(t1 *testing.T) {
 	}{
 		// TODO: Add test cases.
 		{"Start", args{[]Move{}, []Move{}}, Cooperate},
-		{"One Move Made-1", args{[]Move{Defect}, []Move{}}, Cooperate},
-		{"One Move Made-2", args{[]Move{Cooperate}, []Move{}}, Cooperate},
+		{"One Move Made-1", args{[]Move{Defect}, []Move{Cooperate}}, Cooperate},
+		{"One Move Made-2", args{[]Move{Cooperate}, []Move{Cooperate}}, Cooperate},
 		{"One Move Made-3", args{[]Move{Defect}, []Move{Cooperate}}, Cooperate},
 		{"One Move Made-4", args{[]Move{Cooperate}, []Move{Cooperate}}, Cooperate},
-		{"Two Moves Made", args{[]Move{Cooperate, Cooperate}, []Move{Cooperate}}, Cooperate},
-		{"Two Moves Made", args{[]Move{Cooperate, Defect}, []Move{Cooperate}}, Cooperate},
-		{"Two Moves Made", args{[]Move{Defect, Defect}, []Move{Cooperate}}, Defect},
-		{"Two Moves Made", args{[]Move{Defect, Cooperate}, []Move{Cooperate}}, Cooperate},
+		{"Two Moves Made", args{[]Move{Cooperate, Cooperate}, []Move{Cooperate, Cooperate}}, Cooperate},
+		{"Two Moves Made", args{[]Move{Cooperate, Defect}, []Move{Cooperate, Cooperate}}, Cooperate},
+		{"Two Moves Made", args{[]Move{Defect, Defect}, []Move{Cooperate, Cooperate}}, Defect},
+		{"Two Moves Made", args{[]Move{Defect, Cooperate}, []Move{Cooperate, Cooperate}}, Cooperate},
 	}
 	for _, tt := range tests {
 		t1.Run(tt.name, func(t1 *testing.T) {
@@ -115,9 +115,9 @@ func TestAlwaysCooperate_Play(t1 *testing.T) {
 	}{
 		// TODO: Add test cases.
 		{"Sample", args{[]Move{}, []Move{}}, Cooperate},
-		{"One Move Made-1", args{[]Move{Defect}, []Move{}}, Cooperate},
-		{"One Move Made-2", args{[]Move{Cooperate}, []Move{}}, Cooperate},
-		{"One Move Made", args{[]Move{Defect, Cooperate}, []Move{Cooperate}}, Cooperate},
+		{"One Move Made-1", args{[]Move{Defect}, []Move{Cooperate}}, Cooperate},
+		{"One Move Made-2", args{[]Move{Cooperate}, []Move{Cooperate}}, Cooperate},
+		{"One Move Made", args{[]Move{Defect, Cooperate}, []Move{Cooperate, Cooperate}}, Cooperate},
 	}
 	for _, tt := range tests {
 		t1.Run(tt.name, func(t1 *testing.T) {
@@ -141,14 +141,65 @@ func TestAlwaysDefect_Play(t1 *testing.T) {
 	}{
 		// TODO: Add test cases.
 		{"Sample", args{[]Move{}, []Move{}}, Defect},
-		{"One Move Made-1", args{[]Move{Defect}, []Move{}}, Defect},
-		{"One Move Made-2", args{[]Move{Cooperate}, []Move{}}, Defect},
+		{"One Move Made-1", args{[]Move{Defect}, []Move{Defect}}, Defect},
+		{"One Move Made-2", args{[]Move{Cooperate}, []Move{Defect}}, Defect},
 		{"One Move Made-3", args{[]Move{Defect}, []Move{Defect}}, Defect},
 		{"One Move Made-4", args{[]Move{Cooperate}, []Move{Defect}}, Defect},
 	}
 	for _, tt := range tests {
 		t1.Run(tt.name, func(t1 *testing.T) {
 			t := &AlwaysDefect{}
+			if got := t.Play(tt.args.opponentHistory, tt.args.myHistory); got != tt.want {
+				t1.Errorf("Play() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestJoss_Play(t1 *testing.T) {
+	type args struct {
+		opponentHistory []Move
+		myHistory       []Move
+	}
+	tests := []struct {
+		name string
+		args args
+		want Move
+	}{
+		// TODO: Add test cases.
+		{"Sample", args{[]Move{}, []Move{}}, Cooperate},
+	}
+	for _, tt := range tests {
+		t1.Run(tt.name, func(t1 *testing.T) {
+			t := &Joss{}
+			if got := t.Play(tt.args.opponentHistory, tt.args.myHistory); got != tt.want {
+				t1.Errorf("Play() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestGrudger_Play(t1 *testing.T) {
+	type args struct {
+		opponentHistory []Move
+		myHistory       []Move
+	}
+	tests := []struct {
+		name string
+		args args
+		want Move
+	}{
+		// TODO: Add test cases.
+		{"Sample", args{[]Move{}, []Move{}}, Cooperate},
+		{"One Move Defect", args{[]Move{Defect}, []Move{Cooperate}}, Defect},
+
+		{"Two Move Defect", args{[]Move{Cooperate, Defect}, []Move{Cooperate, Cooperate}}, Defect},
+		{"Two Move Cooperate", args{[]Move{Cooperate, Cooperate}, []Move{Cooperate, Cooperate}}, Cooperate},
+		{"Two Move Defects", args{[]Move{Defect, Defect}, []Move{Cooperate, Defect}}, Defect},
+	}
+	for _, tt := range tests {
+		t1.Run(tt.name, func(t1 *testing.T) {
+			t := &Grudger{}
 			if got := t.Play(tt.args.opponentHistory, tt.args.myHistory); got != tt.want {
 				t1.Errorf("Play() = %v, want %v", got, tt.want)
 			}

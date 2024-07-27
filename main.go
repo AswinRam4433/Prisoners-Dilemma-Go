@@ -22,6 +22,9 @@ type GenerousTitForTat struct{}
 type Random struct{}
 type AlwaysCooperate struct{}
 type AlwaysDefect struct{}
+type Joss struct{}
+type Grudger struct{}
+type Pavlov struct{}
 
 func (t *TitForTat) Play(opponentHistory []Move, myHistory []Move) Move {
 	if !CheckValidMoves(opponentHistory, myHistory) {
@@ -84,8 +87,26 @@ func (t *AlwaysCooperate) Name() string {
 	return "Always Cooperate"
 }
 
+func (t *Joss) Play(opponentHistory []Move, myHistory []Move) Move {
+	if !CheckValidMoves(opponentHistory, myHistory) {
+		panic("Invalid moves")
+	}
+	defectProb := rand.Float32()
+	if defectProb < 0.1 {
+		return Defect
+	} else if len(opponentHistory) == 0 {
+		return Cooperate
+
+	} else {
+		l := len(opponentHistory)
+		return opponentHistory[l-1]
+	}
+}
+func (t *Joss) Name() string {
+	return "Joss"
+}
 func CheckValidMoves(opponentHistory []Move, myHistory []Move) bool {
-	if math.Abs(float64(len(opponentHistory)-len(myHistory))) > 1 {
+	if math.Abs(float64(len(opponentHistory)-len(myHistory))) > 0 {
 		return false
 	} else {
 		return true
@@ -103,6 +124,38 @@ func (t *AlwaysDefect) Play(opponentHistory []Move, myHistory []Move) Move {
 
 func (t *AlwaysDefect) Name() string {
 	return "Always Defect"
+}
+
+func (t *Grudger) Play(opponentHistory []Move, myHistory []Move) Move {
+	if !CheckValidMoves(opponentHistory, myHistory) {
+		panic("Invalid moves")
+	}
+	l1 := len(opponentHistory)
+	l2 := len(myHistory)
+	if l1 == 0 {
+		return Cooperate
+	}
+
+	if (l1 > 0 && opponentHistory[l1-1] == Defect) || (l2 > 0 && myHistory[l2-1] == Defect) {
+		return Defect
+	} else {
+		return Cooperate
+	}
+}
+
+func (t *Grudger) Name() string {
+	return "Grudger"
+}
+
+func (t *Pavlov) Play(opponentHistory []Move, myHistory []Move) Move {
+	if !CheckValidMoves(opponentHistory, myHistory) {
+		panic("Invalid moves")
+	}
+	l1 := len(opponentHistory)
+	l2 := len(myHistory)
+	fmt.Println(l1, l2)
+	return Defect
+
 }
 
 func main() {
