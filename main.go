@@ -72,6 +72,17 @@ func (t *Random) Name() string {
 	return "Random"
 }
 
+func (t *AlwaysCooperate) Play(opponentHistory []Move, myHistory []Move) Move {
+	if !CheckValidMoves(opponentHistory, myHistory) {
+		panic("Invalid moves")
+	}
+
+	return Cooperate
+}
+func (t *AlwaysCooperate) Name() string {
+	return "Always Cooperate"
+}
+
 func CheckValidMoves(opponentHistory []Move, myHistory []Move) bool {
 	if math.Abs(float64(len(opponentHistory)-len(myHistory))) > 1 {
 		return false
