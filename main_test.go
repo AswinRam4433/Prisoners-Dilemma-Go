@@ -128,3 +128,30 @@ func TestAlwaysCooperate_Play(t1 *testing.T) {
 		})
 	}
 }
+
+func TestAlwaysDefect_Play(t1 *testing.T) {
+	type args struct {
+		opponentHistory []Move
+		myHistory       []Move
+	}
+	tests := []struct {
+		name string
+		args args
+		want Move
+	}{
+		// TODO: Add test cases.
+		{"Sample", args{[]Move{}, []Move{}}, Defect},
+		{"One Move Made-1", args{[]Move{Defect}, []Move{}}, Defect},
+		{"One Move Made-2", args{[]Move{Cooperate}, []Move{}}, Defect},
+		{"One Move Made-3", args{[]Move{Defect}, []Move{Defect}}, Defect},
+		{"One Move Made-4", args{[]Move{Cooperate}, []Move{Defect}}, Defect},
+	}
+	for _, tt := range tests {
+		t1.Run(tt.name, func(t1 *testing.T) {
+			t := &AlwaysDefect{}
+			if got := t.Play(tt.args.opponentHistory, tt.args.myHistory); got != tt.want {
+				t1.Errorf("Play() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

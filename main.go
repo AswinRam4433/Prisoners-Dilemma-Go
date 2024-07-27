@@ -21,6 +21,7 @@ type TitForTat struct{}
 type GenerousTitForTat struct{}
 type Random struct{}
 type AlwaysCooperate struct{}
+type AlwaysDefect struct{}
 
 func (t *TitForTat) Play(opponentHistory []Move, myHistory []Move) Move {
 	if !CheckValidMoves(opponentHistory, myHistory) {
@@ -90,6 +91,18 @@ func CheckValidMoves(opponentHistory []Move, myHistory []Move) bool {
 		return true
 	}
 
+}
+
+func (t *AlwaysDefect) Play(opponentHistory []Move, myHistory []Move) Move {
+	if !CheckValidMoves(opponentHistory, myHistory) {
+		panic("Invalid moves")
+	}
+
+	return Defect
+}
+
+func (t *AlwaysDefect) Name() string {
+	return "Always Defect"
 }
 
 func main() {
