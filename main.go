@@ -25,6 +25,7 @@ type AlwaysDefect struct{}
 type Joss struct{}
 type Grudger struct{}
 type Pavlov struct{}
+type TesterStrat struct{}
 
 func (t *TitForTat) Play(opponentHistory []Move, myHistory []Move) Move {
 	if !CheckValidMoves(opponentHistory, myHistory) {
@@ -153,8 +154,41 @@ func (t *Pavlov) Play(opponentHistory []Move, myHistory []Move) Move {
 	}
 	l1 := len(opponentHistory)
 	l2 := len(myHistory)
-	fmt.Println(l1, l2)
-	return Defect
+	if l1 == 0 {
+		return Cooperate
+	} else {
+		if (opponentHistory[l1-1] == Defect && myHistory[l2-1] == Defect) || (opponentHistory[l1-1] == Cooperate && myHistory[l2-1] == Cooperate) {
+			return myHistory[l2-1]
+		} else {
+			return 1 - myHistory[l2-1]
+		}
+
+	}
+
+}
+
+func (t *Pavlov) Name() string {
+	return "Pavlov"
+}
+
+func (t *TesterStrat) Play(opponentHistory []Move, myHistory []Move) Move {
+	if !CheckValidMoves(opponentHistory, myHistory) {
+		panic("Invalid moves")
+	}
+	//l1 := len(opponentHistory)
+	l2 := len(myHistory)
+	if l2 == 0 || l2 == 1 {
+		return Cooperate
+	} else if l2 == 2 {
+		return Defect
+	} else {
+		for i, move := range opponentHistory {
+			if i > 2 && move == Defect {
+				return Defect
+			}
+		}
+		return Cooperate
+	}
 
 }
 
