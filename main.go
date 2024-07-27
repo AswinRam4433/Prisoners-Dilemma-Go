@@ -26,6 +26,8 @@ type Joss struct{}
 type Grudger struct{}
 type Pavlov struct{}
 type TesterStrat struct{}
+type SoftMajority struct{}
+type HardMajority struct{}
 
 func (t *TitForTat) Play(opponentHistory []Move, myHistory []Move) Move {
 	if !CheckValidMoves(opponentHistory, myHistory) {
@@ -194,6 +196,60 @@ func (t *TesterStrat) Play(opponentHistory []Move, myHistory []Move) Move {
 
 func (t *TesterStrat) Name() string {
 	return "Testing Strategy"
+}
+
+func (t *SoftMajority) Play(opponentHistory []Move, myHistory []Move) Move {
+	if !CheckValidMoves(opponentHistory, myHistory) {
+		panic("Invalid moves")
+	}
+	l := len(opponentHistory)
+	c := 0
+	if l == 0 {
+		return Cooperate
+	}
+	for i := 0; i < l; i++ {
+		if opponentHistory[i] == Cooperate {
+			c++
+		}
+		if myHistory[i] == Defect {
+			c--
+		}
+	}
+	if c > 0 {
+		return Cooperate
+	} else {
+		return Defect
+	}
+}
+
+func (t *SoftMajority) Name() string {
+	return "SoftMajority"
+}
+
+func (t *HardMajority) Play(opponentHistory []Move, myHistory []Move) Move {
+	if !CheckValidMoves(opponentHistory, myHistory) {
+		panic("Invalid moves")
+	}
+	l := len(opponentHistory)
+	c := 0
+	for i := 0; i < l; i++ {
+		if opponentHistory[i] == Defect {
+			c++
+		}
+		if myHistory[i] == Cooperate {
+			c--
+		}
+	}
+	if c > 0 {
+		return Defect
+	} else {
+		return Cooperate
+	}
+
+}
+
+func (t *HardMajority) Name() string {
+	return "HardMajority"
 }
 func main() {
 	fmt.Println("Hello World New")

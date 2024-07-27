@@ -260,3 +260,55 @@ func TestTesterStrat_Play(t1 *testing.T) {
 		})
 	}
 }
+
+func TestSoftMajority_Play(t1 *testing.T) {
+	type args struct {
+		opponentHistory []Move
+		myHistory       []Move
+	}
+	tests := []struct {
+		name string
+		args args
+		want Move
+	}{
+		// TODO: Add test cases.
+		{"Sample", args{[]Move{}, []Move{}}, Cooperate},
+		{"One Move Made-1", args{[]Move{Defect}, []Move{Cooperate}}, Defect},
+		{"One Move Made-2", args{[]Move{Cooperate}, []Move{Defect}}, Defect},
+		{"Two Moves Made-1", args{[]Move{Defect, Defect}, []Move{Cooperate, Defect}}, Defect},
+	}
+	for _, tt := range tests {
+		t1.Run(tt.name, func(t1 *testing.T) {
+			t := &SoftMajority{}
+			if got := t.Play(tt.args.opponentHistory, tt.args.myHistory); got != tt.want {
+				t1.Errorf("Play() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestHardMajority_Play(t1 *testing.T) {
+	type args struct {
+		opponentHistory []Move
+		myHistory       []Move
+	}
+	tests := []struct {
+		name string
+		args args
+		want Move
+	}{
+		// TODO: Add test cases.
+		{"Sample", args{[]Move{}, []Move{}}, Cooperate},
+		{"One Move Made-1", args{[]Move{Defect}, []Move{Cooperate}}, Cooperate},
+		{"One Move Made-2", args{[]Move{Cooperate}, []Move{Defect}}, Cooperate},
+		{"Two Moves Made-1", args{[]Move{Defect, Defect}, []Move{Cooperate, Defect}}, Defect},
+	}
+	for _, tt := range tests {
+		t1.Run(tt.name, func(t1 *testing.T) {
+			t := &HardMajority{}
+			if got := t.Play(tt.args.opponentHistory, tt.args.myHistory); got != tt.want {
+				t1.Errorf("Play() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
