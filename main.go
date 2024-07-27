@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"math"
+	"math/rand"
 )
 
 type Move int
@@ -18,6 +19,8 @@ type Strategy interface {
 }
 type TitForTat struct{}
 type GenerousTitForTat struct{}
+type Random struct{}
+type AlwaysCooperate struct{}
 
 func (t *TitForTat) Play(opponentHistory []Move, myHistory []Move) Move {
 	if !CheckValidMoves(opponentHistory, myHistory) {
@@ -52,6 +55,21 @@ func (t *GenerousTitForTat) Play(opponentHistory []Move, myHistory []Move) Move 
 
 func (t *GenerousTitForTat) Name() string {
 	return "Generous Tit For Tat"
+}
+
+func (t *Random) Play(opponentHistory []Move, myHistory []Move) Move {
+	if !CheckValidMoves(opponentHistory, myHistory) {
+		panic("Invalid moves")
+	}
+	if rand.Float32() < 0.5 {
+		return Defect
+	} else {
+		return Cooperate
+	}
+}
+
+func (t *Random) Name() string {
+	return "Random"
 }
 
 func CheckValidMoves(opponentHistory []Move, myHistory []Move) bool {
