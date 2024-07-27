@@ -1,0 +1,27 @@
+Tit for Tat: Starts by cooperating and then mimics the opponent's previous move. If the opponent cooperates, it cooperates; if the opponent defects, it defects.
+
+Tit for Two Tats: Similar to Tit for Tat but more forgiving. It cooperates unless the opponent defects twice in a row.
+
+Random: Randomly chooses to cooperate or defect with equal probability.
+
+Always Cooperate: Always cooperates regardless of the opponent's actions.
+
+Always Defect: Always defects regardless of the opponent's actions.
+
+Joss: Mostly plays like Tit for Tat but occasionally defects (with a small probability).
+
+Grudger (or Grim Trigger): Starts by cooperating but defects forever if the opponent defects even once.
+
+Pavlov: Also known as "Win-Stay, Lose-Shift," this strategy repeats its last move if it was rewarded (both players cooperated or both defected) and switches if it was not rewarded (one cooperated and the other defected).
+
+Tester: Starts by defecting to test the opponent. If the opponent retaliates, it switches to Tit for Tat; otherwise, it continues to defect.
+
+Friedman: Cooperates until the opponent defects; then it defects for the rest of the game.
+
+Soft Majority: Cooperates if the opponent has cooperated more than it has defected in the past, otherwise defects.
+
+Hard Majority: Defects if the opponent has defected more than it has cooperated in the past, otherwise cooperates.
+
+Prober: Starts with a sequence of moves to test the opponent’s strategy and then behaves like Tit for Tat or another strategy based on the opponent’s response.
+
+Generous Tit for Tat: Similar to Tit for Tat but occasionally forgives a defection to maintain cooperation.

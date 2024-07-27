@@ -17,8 +17,13 @@ type Strategy interface {
 	Play(oppHistory []Move, myHistory []Move) Move
 }
 type TitForTat struct{}
+type GenerousTitForTat struct{}
 
 func (t *TitForTat) Play(opponentHistory []Move, myHistory []Move) Move {
+	if !CheckValidMoves(opponentHistory, myHistory) {
+		panic("Invalid moves")
+	}
+
 	if len(opponentHistory) == 0 {
 		return Cooperate
 	}
@@ -27,6 +32,26 @@ func (t *TitForTat) Play(opponentHistory []Move, myHistory []Move) Move {
 
 func (t *TitForTat) Name() string {
 	return "TitForTat"
+}
+
+func (t *GenerousTitForTat) Play(opponentHistory []Move, myHistory []Move) Move {
+	if !CheckValidMoves(opponentHistory, myHistory) {
+		panic("Invalid moves")
+	}
+	if len(opponentHistory) == 0 || len(opponentHistory) == 1 {
+		return Cooperate
+	} else {
+		l := len(opponentHistory)
+		if opponentHistory[l-1] == Defect && opponentHistory[l-2] == Defect {
+			return Defect
+		} else {
+			return Cooperate
+		}
+	}
+}
+
+func (t *GenerousTitForTat) Name() string {
+	return "Generous Tit For Tat"
 }
 
 func CheckValidMoves(opponentHistory []Move, myHistory []Move) bool {
