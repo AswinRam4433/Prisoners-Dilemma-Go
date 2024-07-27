@@ -192,6 +192,9 @@ func (t *TesterStrat) Play(opponentHistory []Move, myHistory []Move) Move {
 
 }
 
+func (t *TesterStrat) Name() string {
+	return "Testing Strategy"
+}
 func main() {
 	fmt.Println("Hello World New")
 

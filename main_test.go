@@ -232,3 +232,31 @@ func TestPavlov_Play(t1 *testing.T) {
 		})
 	}
 }
+
+func TestTesterStrat_Play(t1 *testing.T) {
+	type args struct {
+		opponentHistory []Move
+		myHistory       []Move
+	}
+	tests := []struct {
+		name string
+		args args
+		want Move
+	}{
+		// TODO: Add test cases.
+		{"Sample", args{[]Move{}, []Move{}}, Cooperate},
+		{"One Move Made-1", args{[]Move{Defect}, []Move{Cooperate}}, Cooperate},
+		{"One Move Made-2", args{[]Move{Cooperate}, []Move{Cooperate}}, Cooperate},
+		{"Two Moves Made-1", args{[]Move{Defect, Defect}, []Move{Cooperate, Cooperate}}, Defect},
+		{"Two Moves Made-2", args{[]Move{Defect, Cooperate}, []Move{Cooperate, Cooperate}}, Defect},
+		{"Two Moves Made-3", args{[]Move{Cooperate, Defect}, []Move{Cooperate, Cooperate}}, Defect},
+	}
+	for _, tt := range tests {
+		t1.Run(tt.name, func(t1 *testing.T) {
+			t := &TesterStrat{}
+			if got := t.Play(tt.args.opponentHistory, tt.args.myHistory); got != tt.want {
+				t1.Errorf("Play() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
