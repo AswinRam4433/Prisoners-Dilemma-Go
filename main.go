@@ -456,7 +456,7 @@ func main() {
 	})
 	roundWiseResults := make(chan struct {
 		p1, p2                   Strategy
-		scoresList1, scoresList2 []int
+		scoresList1, scoresList2 []Move
 	}, len(SubmittedStrategies)*len(SubmittedStrategies)) // Buffer size for channel
 
 	go func() {
@@ -468,8 +468,8 @@ func main() {
 
 	go func() {
 		for result := range roundWiseResults {
-			fmt.Printf("Match: %s VS %s\n", result.p1.Name(), result.p2.Name())
-			fmt.Printf("Scores: %v VS %v\n", result.scoresList1, result.scoresList2)
+			fmt.Printf("\nRound Wise Results For Match: %s VS %s\n", result.p1.Name(), result.p2.Name())
+			fmt.Printf("%v VS \n%v", result.scoresList1, result.scoresList2)
 		}
 	}()
 
@@ -485,7 +485,7 @@ func main() {
 	close(roundWiseResults) // Ensure this is closed after all matches are done
 
 	// Print overall results
-	fmt.Println("Overall Results:")
+	fmt.Println("\n\nOverall Results:")
 	for strategy, score := range results {
 		fmt.Printf("%s: %d\n", strategy, score)
 	}
@@ -496,7 +496,7 @@ func playMatch(strategy1, strategy2 Strategy, rounds int, matchChan chan<- struc
 	score1, score2 int
 }, roundWiseResults chan<- struct {
 	p1, p2                   Strategy
-	scoresList1, scoresList2 []int
+	scoresList1, scoresList2 []Move
 }) {
 	var strat1History, strat2History []Move
 	var strat1Score, strat2Score int
@@ -532,8 +532,8 @@ func playMatch(strategy1, strategy2 Strategy, rounds int, matchChan chan<- struc
 
 	roundWiseResults <- struct {
 		p1, p2                   Strategy
-		scoresList1, scoresList2 []int
-	}{strategy1, strategy2, scoresList1, scoresList2}
+		scoresList1, scoresList2 []Move
+	}{strategy1, strategy2, strat1History, strat2History}
 
 	matchChan <- struct {
 		p1, p2         Strategy
