@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 	"math/rand"
+	"time"
 )
 
 type Move int
@@ -251,7 +252,291 @@ func (t *HardMajority) Play(opponentHistory []Move, myHistory []Move) Move {
 func (t *HardMajority) Name() string {
 	return "HardMajority"
 }
-func main() {
-	fmt.Println("Hello World New")
 
+//func main() {
+////	SubmittedStrategies := []Strategy{
+////		&TitForTat{},
+////		&GenerousTitForTat{},
+////		&Random{},
+////		&AlwaysCooperate{},
+////		&AlwaysDefect{},
+////		&Joss{},
+////		&Grudger{},
+////		&Pavlov{},
+////		&TesterStrat{},
+////		&SoftMajority{},
+////		&HardMajority{},
+////	}
+////
+////	rounds := 100
+////	results := make(map[string]int)
+////
+////	matchChan := make(chan struct {
+////		p1, p2         Strategy
+////		score1, score2 int
+////	})
+////
+////	roundWiseResults := make(chan struct {
+////		p1, p2                   Strategy
+////		scoresList1, scoresList2 []Move
+////	})
+////
+////	// GENAI START
+////	// Needed help to run the go routines
+////
+////	var wg sync.WaitGroup
+////
+////	go func() {
+////		for result := range matchChan {
+////			results[result.p1.Name()] += result.score1
+////			results[result.p2.Name()] += result.score2
+////		}
+////	}()
+////
+////	for i := 0; i < len(SubmittedStrategies); i++ {
+////		for j := i; j < len(SubmittedStrategies); j++ {
+////			wg.Add(1)
+////			go func(s1, s2 Strategy) {
+////				defer wg.Done()
+////				playMatch(s1, s2, rounds, matchChan, roundWiseResults)
+////			}(SubmittedStrategies[i], SubmittedStrategies[j])
+////		}
+////	}
+////
+////	wg.Wait()
+////	close(matchChan)
+////
+////	// GENAI END
+////
+////	//for i := 0; i < len(SubmittedStrategies); i++ {
+////	//	for j := i; j < len(SubmittedStrategies); j++ {
+////	//		go playMatch(SubmittedStrategies[i], SubmittedStrategies[j], rounds, matchChan)
+////	//	}
+////	//}
+////
+////	fmt.Println("Printing Results")
+////	for strategy, score := range results {
+////		fmt.Printf("%s: %d\n", strategy, score)
+////	}
+////	fmt.Println("End Of Results")
+////
+////}
+
+//func main() {
+//	SubmittedStrategies := []Strategy{
+//		&TitForTat{},
+//		&GenerousTitForTat{},
+//		&Random{},
+//		&AlwaysCooperate{},
+//		&AlwaysDefect{},
+//		&Joss{},
+//		&Grudger{},
+//		&Pavlov{},
+//		&TesterStrat{},
+//		&SoftMajority{},
+//		&HardMajority{},
+//	}
+//
+//	rounds := 200
+//	results := make(map[string]int)
+//	matchChan := make(chan struct {
+//		p1, p2         Strategy
+//		score1, score2 int
+//	})
+//	roundWiseResults := make(chan struct {
+//		p1, p2                   Strategy
+//		scoresList1, scoresList2 []Move
+//	})
+//
+//	go func() {
+//		for result := range matchChan {
+//			results[result.p1.Name()] += result.score1
+//			results[result.p2.Name()] += result.score2
+//		}
+//	}()
+//
+//	for i := 0; i < len(SubmittedStrategies); i++ {
+//		for j := i; j < len(SubmittedStrategies); j++ {
+//			go playMatch(SubmittedStrategies[i], SubmittedStrategies[j], rounds, matchChan, roundWiseResults)
+//		}
+//	}
+//
+//	time.Sleep(2 * time.Second) // Wait for goroutines to finish
+//	close(matchChan)
+//	close(roundWiseResults)
+//
+//	for strategy, score := range results {
+//		fmt.Printf("%s: %d\n", strategy, score)
+//	}
+//
+//	// Process and print round-wise results
+//	for result := range roundWiseResults {
+//		fmt.Printf("Match: %s VS %s\n", result.p1.Name(), result.p2.Name())
+//		fmt.Printf("Scores: %v VS %v\n", result.scoresList1, result.scoresList2)
+//	}
+//}
+//
+//func playMatch(strategy1 Strategy, strategy2 Strategy, rounds int, matchChan chan<- struct {
+//	p1, p2         Strategy
+//	score1, score2 int
+//}, roundWiseResults chan<- struct {
+//	p1, p2                   Strategy
+//	scoresList1, scoresList2 []Move
+//}) {
+//	var strat1History, strat2History []Move
+//	var strat1Score, strat2Score int
+//
+//	for i := 0; i < rounds; i++ {
+//		//fmt.Printf("In round %d of match %s VS %s\n", i, strategy1.Name(), strategy2.Name())
+//
+//		move1 := strategy1.Play(strat2History, strat1History)
+//		move2 := strategy2.Play(strat1History, strat2History)
+//		// function signature and calls have to match semantically
+//
+//		strat1History = append(strat1History, move1)
+//		strat2History = append(strat2History, move2)
+//
+//		if move1 == move2 {
+//			if move1 == Defect {
+//				// both parties Defected
+//				// both get 1 point each
+//				strat1Score = strat1Score + 1
+//				strat2Score = strat2Score + 1
+//			} else {
+//				// both parties Cooperated
+//				// both get 3 points each
+//				strat1Score = strat1Score + 3
+//				strat2Score = strat2Score + 3
+//
+//			}
+//		} else {
+//			// whoever Defects receives 5 points
+//			// whoever Cooperated receives 0 points
+//			if move1 == Defect {
+//				strat1Score = strat1Score + 5
+//			} else {
+//				strat2Score = strat2Score + 5
+//			}
+//		}
+//
+//	}
+//	roundWiseResults <- struct {
+//		p1, p2                   Strategy
+//		scoresList1, scoresList2 []Move
+//	}{strategy1, strategy2, strat1History, strat2History}
+//
+//	fmt.Printf("In %s VS %s: %d VS %d\n", strategy1.Name(), strategy2.Name(), strat1Score, strat2Score)
+//	matchChan <- struct {
+//		p1, p2         Strategy
+//		score1, score2 int
+//	}{strategy1, strategy2, strat1Score, strat2Score}
+//
+//}
+
+func main() {
+	SubmittedStrategies := []Strategy{
+		&TitForTat{},
+		&GenerousTitForTat{},
+		&Random{},
+		&AlwaysCooperate{},
+		&AlwaysDefect{},
+		&Joss{},
+		&Grudger{},
+		&Pavlov{},
+		&TesterStrat{},
+		&SoftMajority{},
+		&HardMajority{},
+	}
+
+	rounds := 200
+	results := make(map[string]int)
+	matchChan := make(chan struct {
+		p1, p2         Strategy
+		score1, score2 int
+	})
+	roundWiseResults := make(chan struct {
+		p1, p2                   Strategy
+		scoresList1, scoresList2 []int
+	}, len(SubmittedStrategies)*len(SubmittedStrategies)) // Buffer size for channel
+
+	go func() {
+		for result := range matchChan {
+			results[result.p1.Name()] += result.score1
+			results[result.p2.Name()] += result.score2
+		}
+	}()
+
+	go func() {
+		for result := range roundWiseResults {
+			fmt.Printf("Match: %s VS %s\n", result.p1.Name(), result.p2.Name())
+			fmt.Printf("Scores: %v VS %v\n", result.scoresList1, result.scoresList2)
+		}
+	}()
+
+	for i := 0; i < len(SubmittedStrategies); i++ {
+		for j := i; j < len(SubmittedStrategies); j++ {
+			go playMatch(SubmittedStrategies[i], SubmittedStrategies[j], rounds, matchChan, roundWiseResults)
+		}
+	}
+
+	// Wait for all matches to complete (adjust sleep time as needed)
+	time.Sleep(10 * time.Second)
+	close(matchChan)
+	close(roundWiseResults) // Ensure this is closed after all matches are done
+
+	// Print overall results
+	fmt.Println("Overall Results:")
+	for strategy, score := range results {
+		fmt.Printf("%s: %d\n", strategy, score)
+	}
+}
+
+func playMatch(strategy1, strategy2 Strategy, rounds int, matchChan chan<- struct {
+	p1, p2         Strategy
+	score1, score2 int
+}, roundWiseResults chan<- struct {
+	p1, p2                   Strategy
+	scoresList1, scoresList2 []int
+}) {
+	var strat1History, strat2History []Move
+	var strat1Score, strat2Score int
+	var scoresList1, scoresList2 []int
+
+	for i := 0; i < rounds; i++ {
+		move1 := strategy1.Play(strat2History, strat1History)
+		move2 := strategy2.Play(strat1History, strat2History)
+
+		strat1History = append(strat1History, move1)
+		strat2History = append(strat2History, move2)
+
+		if move1 == move2 {
+			if move1 == Defect {
+				strat1Score++
+				strat2Score++
+			} else {
+				strat1Score += 3
+				strat2Score += 3
+			}
+		} else {
+			if move1 == Defect {
+				strat1Score += 5
+			} else {
+				strat2Score += 5
+			}
+		}
+
+		// Collecting scores for each round
+		scoresList1 = append(scoresList1, strat1Score)
+		scoresList2 = append(scoresList2, strat2Score)
+	}
+
+	roundWiseResults <- struct {
+		p1, p2                   Strategy
+		scoresList1, scoresList2 []int
+	}{strategy1, strategy2, scoresList1, scoresList2}
+
+	matchChan <- struct {
+		p1, p2         Strategy
+		score1, score2 int
+	}{strategy1, strategy2, strat1Score, strat2Score}
 }
