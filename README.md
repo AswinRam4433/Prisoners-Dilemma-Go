@@ -43,8 +43,8 @@ go run main.go
 ## Code Description
 * Strategy Interface: Defines the methods that all strategies must implement:
 
-  + Name() string: Returns the name of the strategy.
-  + Play(oppHistory []Move, myHistory []Move) Move: Determines the move to play based on the opponent's history and the strategy's own history.
+  + Name(): Returns the name of the strategy.
+  + Play(): Determines the move to play based on the opponent's history and the strategy's own history.
 
 * Move Type: An enum representing the possible moves in the game: Cooperate and Defect
 
