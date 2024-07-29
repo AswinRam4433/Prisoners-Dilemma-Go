@@ -20,6 +20,7 @@ const (
 type Strategy interface {
 	Name() string
 	Play(oppHistory []Move, myHistory []Move) Move
+	Coop() int
 }
 type TitForTat struct{}
 type GenerousTitForTat struct{}
@@ -47,7 +48,9 @@ func (t *TitForTat) Play(opponentHistory []Move, myHistory []Move) Move {
 func (t *TitForTat) Name() string {
 	return "TitForTat"
 }
-
+func (t *TitForTat) Coop() int {
+	return 1
+}
 func (t *GenerousTitForTat) Play(opponentHistory []Move, myHistory []Move) Move {
 	if !CheckValidMoves(opponentHistory, myHistory) {
 		panic("Invalid moves")
@@ -67,6 +70,9 @@ func (t *GenerousTitForTat) Play(opponentHistory []Move, myHistory []Move) Move 
 func (t *GenerousTitForTat) Name() string {
 	return "Generous Tit For Tat"
 }
+func (t *GenerousTitForTat) Coop() int {
+	return 1
+}
 
 func (t *Random) Play(opponentHistory []Move, myHistory []Move) Move {
 	if !CheckValidMoves(opponentHistory, myHistory) {
@@ -82,6 +88,9 @@ func (t *Random) Play(opponentHistory []Move, myHistory []Move) Move {
 func (t *Random) Name() string {
 	return "Random"
 }
+func (t *Random) Coop() int {
+	return 0
+}
 
 func (t *AlwaysCooperate) Play(opponentHistory []Move, myHistory []Move) Move {
 	if !CheckValidMoves(opponentHistory, myHistory) {
@@ -92,6 +101,10 @@ func (t *AlwaysCooperate) Play(opponentHistory []Move, myHistory []Move) Move {
 }
 func (t *AlwaysCooperate) Name() string {
 	return "Always Cooperate"
+}
+
+func (t *AlwaysCooperate) Coop() int {
+	return 1
 }
 
 func (t *Joss) Play(opponentHistory []Move, myHistory []Move) Move {
@@ -111,6 +124,9 @@ func (t *Joss) Play(opponentHistory []Move, myHistory []Move) Move {
 }
 func (t *Joss) Name() string {
 	return "Joss"
+}
+func (t *Joss) Coop() int {
+	return 1
 }
 func CheckValidMoves(opponentHistory []Move, myHistory []Move) bool {
 	if math.Abs(float64(len(opponentHistory)-len(myHistory))) > 0 {
@@ -133,6 +149,10 @@ func (t *AlwaysDefect) Name() string {
 	return "Always Defect"
 }
 
+func (t *AlwaysDefect) Coop() int {
+	return -1
+}
+
 func (t *Grudger) Play(opponentHistory []Move, myHistory []Move) Move {
 	if !CheckValidMoves(opponentHistory, myHistory) {
 		panic("Invalid moves")
@@ -152,6 +172,9 @@ func (t *Grudger) Play(opponentHistory []Move, myHistory []Move) Move {
 
 func (t *Grudger) Name() string {
 	return "Grudger"
+}
+func (t *Grudger) Coop() int {
+	return -1
 }
 
 func (t *Pavlov) Play(opponentHistory []Move, myHistory []Move) Move {
@@ -175,6 +198,9 @@ func (t *Pavlov) Play(opponentHistory []Move, myHistory []Move) Move {
 
 func (t *Pavlov) Name() string {
 	return "Pavlov"
+}
+func (t *Pavlov) Coop() int {
+	return 1
 }
 
 func (t *TesterStrat) Play(opponentHistory []Move, myHistory []Move) Move {
@@ -200,6 +226,10 @@ func (t *TesterStrat) Play(opponentHistory []Move, myHistory []Move) Move {
 
 func (t *TesterStrat) Name() string {
 	return "Testing Strategy"
+}
+
+func (t *TesterStrat) Coop() int {
+	return 0
 }
 
 func (t *SoftMajority) Play(opponentHistory []Move, myHistory []Move) Move {
@@ -229,6 +259,9 @@ func (t *SoftMajority) Play(opponentHistory []Move, myHistory []Move) Move {
 func (t *SoftMajority) Name() string {
 	return "SoftMajority"
 }
+func (t *SoftMajority) Coop() int {
+	return 1
+}
 
 func (t *HardMajority) Play(opponentHistory []Move, myHistory []Move) Move {
 	if !CheckValidMoves(opponentHistory, myHistory) {
@@ -254,6 +287,9 @@ func (t *HardMajority) Play(opponentHistory []Move, myHistory []Move) Move {
 
 func (t *HardMajority) Name() string {
 	return "HardMajority"
+}
+func (t *HardMajority) Coop() int {
+	return 0
 }
 
 //func main() {
@@ -492,9 +528,10 @@ func main() {
 	for strategy, score := range results {
 		fmt.Printf("%s: %d\n", strategy, score)
 	}
-	strategyClassification := make(map[string]bool)
+
+	strategyClassification := make(map[string]int)
 	for i := range SubmittedStrategies {
-		strategyClassification[SubmittedStrategies[i].Name()] = true
+		strategyClassification[SubmittedStrategies[i].Name()] = SubmittedStrategies[i].Coop()
 	}
 	colorResults := colorMapper(strategyClassification)
 	visResults(matchChan, roundWiseResults, results, colorResults)
@@ -550,17 +587,20 @@ func playMatch(strategy1, strategy2 Strategy, rounds int, matchChan chan<- struc
 	}{strategy1, strategy2, strat1Score, strat2Score}
 }
 
-func colorMapper(strats map[string]bool) map[string]string {
+func colorMapper(strats map[string]int) map[string]string {
 	// assuming cooperating strategies have True
 	greenHexCode := "#00FF00"
 	redHexCode := "#FF0000"
+	yellowHexCode := "#FFFF00"
 	colorResults := make(map[string]string)
 	for k, v := range strats {
-		if v == true {
+		if v == 1 {
 			colorResults[k] = greenHexCode
 
-		} else {
+		} else if v == -1 {
 			colorResults[k] = redHexCode
+		} else {
+			colorResults[k] = yellowHexCode
 		}
 	}
 	return colorResults
