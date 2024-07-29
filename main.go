@@ -34,6 +34,10 @@ type TesterStrat struct{}
 type SoftMajority struct{}
 type HardMajority struct{}
 
+var greenHexCode = "#00FF00"
+var redHexCode = "#FF0000"
+var yellowHexCode = "#FFFF00"
+
 func (t *TitForTat) Play(opponentHistory []Move, myHistory []Move) Move {
 	if !CheckValidMoves(opponentHistory, myHistory) {
 		panic("Invalid moves")
@@ -589,9 +593,7 @@ func playMatch(strategy1, strategy2 Strategy, rounds int, matchChan chan<- struc
 
 func colorMapper(strats map[string]int) map[string]string {
 	// assuming cooperating strategies have True
-	greenHexCode := "#00FF00"
-	redHexCode := "#FF0000"
-	yellowHexCode := "#FFFF00"
+
 	colorResults := make(map[string]string)
 	for k, v := range strats {
 		if v == 1 {
@@ -606,6 +608,68 @@ func colorMapper(strats map[string]int) map[string]string {
 	return colorResults
 
 }
+
+//func visResults1(
+//	matchChan chan<- struct {
+//		p1, p2         Strategy
+//		score1, score2 int
+//	},
+//	roundWiseResults chan<- struct {
+//		p1, p2                   Strategy
+//		scoresList1, scoresList2 []Move
+//	},
+//	results map[string]int,
+//	colorResults map[string]string,
+//) {
+//	fmt.Println("Visualizing Results")
+//	dataPoints := make([]opts.BarData, 0)
+//	dataLabels := make([]string, 0)
+//
+//	//for strategy, score := range results {
+//	//	dataPoints = append(dataPoints, opts.BarData{Value: int32(score)})
+//	//	dataLabels = append(dataLabels, strategy)
+//	//}
+//
+//	for strategy, score := range results {
+//		color, exists := colorResults[strategy]
+//		if !exists {
+//			color = "#000000" // Default to black if no color is defined
+//		}
+//
+//		dataPoints = append(dataPoints, opts.BarData{
+//			Value: score,
+//			ItemStyle: &opts.ItemStyle{
+//				Color: color,
+//			},
+//		})
+//		dataLabels = append(dataLabels, strategy)
+//	}
+//
+//	bar := charts.NewBar()
+//	bar.SetGlobalOptions(charts.WithTitleOpts(opts.Title{
+//		Title:    "Prisoner's Dilemma",
+//		Subtitle: "Strategy Wise Performance",
+//	}),
+//		charts.WithXAxisOpts(opts.XAxis{
+//			AxisLabel: &opts.AxisLabel{
+//				Rotate: 45,
+//			},
+//		}),
+//	)
+//
+//	bar.SetXAxis(dataLabels).AddSeries("Strategies", dataPoints)
+//
+//	f, err := os.Create("myVis.html")
+//	if err != nil {
+//		panic(err)
+//	}
+//	bar.Render(f)
+//
+//	fmt.Println("Dummy Prints")
+//	fmt.Println(matchChan)
+//	fmt.Println(roundWiseResults)
+//}
+
 func visResults(
 	matchChan chan<- struct {
 		p1, p2         Strategy
@@ -619,13 +683,12 @@ func visResults(
 	colorResults map[string]string,
 ) {
 	fmt.Println("Visualizing Results")
-	dataPoints := make([]opts.BarData, 0)
 	dataLabels := make([]string, 0)
 
-	//for strategy, score := range results {
-	//	dataPoints = append(dataPoints, opts.BarData{Value: int32(score)})
-	//	dataLabels = append(dataLabels, strategy)
-	//}
+	// Define the color categories
+	greenSeries := make([]opts.BarData, 0)
+	redSeries := make([]opts.BarData, 0)
+	yellowSeries := make([]opts.BarData, 0)
 
 	for strategy, score := range results {
 		color, exists := colorResults[strategy]
@@ -633,27 +696,53 @@ func visResults(
 			color = "#000000" // Default to black if no color is defined
 		}
 
-		dataPoints = append(dataPoints, opts.BarData{
+		dataLabels = append(dataLabels, strategy)
+
+		// Assign data points to the appropriate series based on color
+		barData := opts.BarData{
 			Value: score,
 			ItemStyle: &opts.ItemStyle{
 				Color: color,
 			},
-		})
-		dataLabels = append(dataLabels, strategy)
+		}
+		switch color {
+		case "#00FF00": // Green
+			greenSeries = append(greenSeries, barData)
+			redSeries = append(redSeries, opts.BarData{}) // Add empty data to maintain alignment
+			yellowSeries = append(yellowSeries, opts.BarData{})
+		case "#FF0000": // Red
+			redSeries = append(redSeries, barData)
+			greenSeries = append(greenSeries, opts.BarData{}) // Add empty data to maintain alignment
+			yellowSeries = append(yellowSeries, opts.BarData{})
+		case "#FFFF00": // Yellow
+			yellowSeries = append(yellowSeries, barData)
+			greenSeries = append(greenSeries, opts.BarData{}) // Add empty data to maintain alignment
+			redSeries = append(redSeries, opts.BarData{})
+		default:
+			greenSeries = append(greenSeries, opts.BarData{})
+			redSeries = append(redSeries, opts.BarData{})
+			yellowSeries = append(yellowSeries, opts.BarData{})
+		}
 	}
 
 	bar := charts.NewBar()
-	bar.SetGlobalOptions(charts.WithTitleOpts(opts.Title{
-		Title:    "Prisoner's Dilemma",
-		Subtitle: "Strategy Wise Performance",
-	}),
+	bar.SetGlobalOptions(
+		charts.WithTitleOpts(opts.Title{
+			Title:    "Prisoner's Dilemma",
+			Subtitle: "Strategy Wise Performance",
+		}),
 		charts.WithXAxisOpts(opts.XAxis{
 			AxisLabel: &opts.AxisLabel{
 				Rotate: 45,
 			},
-		}))
+		}),
+	)
 
-	bar.SetXAxis(dataLabels).AddSeries("Strategies", dataPoints)
+	// Add series to the bar chart
+	bar.SetXAxis(dataLabels).
+		AddSeries("Cooperating Strategies", greenSeries, charts.WithItemStyleOpts(opts.ItemStyle{Color: greenHexCode})).
+		AddSeries("Defecting Strategies", redSeries, charts.WithItemStyleOpts(opts.ItemStyle{Color: redHexCode})).
+		AddSeries("Neutral Strategies", yellowSeries, charts.WithItemStyleOpts(opts.ItemStyle{Color: yellowHexCode}))
 
 	f, err := os.Create("myVis.html")
 	if err != nil {
