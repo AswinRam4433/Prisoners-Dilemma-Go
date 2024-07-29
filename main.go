@@ -38,6 +38,16 @@ var greenHexCode = "#00FF00"
 var redHexCode = "#FF0000"
 var yellowHexCode = "#FFFF00"
 
+func CheckValidMoves(opponentHistory []Move, myHistory []Move) bool {
+	// Checks if the game state is valid
+	if math.Abs(float64(len(opponentHistory)-len(myHistory))) > 0 {
+		return false
+	} else {
+		return true
+	}
+
+}
+
 func (t *TitForTat) Play(opponentHistory []Move, myHistory []Move) Move {
 	if !CheckValidMoves(opponentHistory, myHistory) {
 		panic("Invalid moves")
@@ -52,9 +62,11 @@ func (t *TitForTat) Play(opponentHistory []Move, myHistory []Move) Move {
 func (t *TitForTat) Name() string {
 	return "TitForTat"
 }
+
 func (t *TitForTat) Coop() int {
 	return 1
 }
+
 func (t *GenerousTitForTat) Play(opponentHistory []Move, myHistory []Move) Move {
 	if !CheckValidMoves(opponentHistory, myHistory) {
 		panic("Invalid moves")
@@ -74,6 +86,7 @@ func (t *GenerousTitForTat) Play(opponentHistory []Move, myHistory []Move) Move 
 func (t *GenerousTitForTat) Name() string {
 	return "Generous Tit For Tat"
 }
+
 func (t *GenerousTitForTat) Coop() int {
 	return 1
 }
@@ -92,6 +105,7 @@ func (t *Random) Play(opponentHistory []Move, myHistory []Move) Move {
 func (t *Random) Name() string {
 	return "Random"
 }
+
 func (t *Random) Coop() int {
 	return 0
 }
@@ -129,16 +143,9 @@ func (t *Joss) Play(opponentHistory []Move, myHistory []Move) Move {
 func (t *Joss) Name() string {
 	return "Joss"
 }
+
 func (t *Joss) Coop() int {
 	return 1
-}
-func CheckValidMoves(opponentHistory []Move, myHistory []Move) bool {
-	if math.Abs(float64(len(opponentHistory)-len(myHistory))) > 0 {
-		return false
-	} else {
-		return true
-	}
-
 }
 
 func (t *AlwaysDefect) Play(opponentHistory []Move, myHistory []Move) Move {
@@ -177,6 +184,7 @@ func (t *Grudger) Play(opponentHistory []Move, myHistory []Move) Move {
 func (t *Grudger) Name() string {
 	return "Grudger"
 }
+
 func (t *Grudger) Coop() int {
 	return -1
 }
@@ -203,6 +211,7 @@ func (t *Pavlov) Play(opponentHistory []Move, myHistory []Move) Move {
 func (t *Pavlov) Name() string {
 	return "Pavlov"
 }
+
 func (t *Pavlov) Coop() int {
 	return 1
 }
@@ -263,6 +272,7 @@ func (t *SoftMajority) Play(opponentHistory []Move, myHistory []Move) Move {
 func (t *SoftMajority) Name() string {
 	return "SoftMajority"
 }
+
 func (t *SoftMajority) Coop() int {
 	return 1
 }
@@ -292,189 +302,10 @@ func (t *HardMajority) Play(opponentHistory []Move, myHistory []Move) Move {
 func (t *HardMajority) Name() string {
 	return "HardMajority"
 }
+
 func (t *HardMajority) Coop() int {
 	return 0
 }
-
-//func main() {
-////	SubmittedStrategies := []Strategy{
-////		&TitForTat{},
-////		&GenerousTitForTat{},
-////		&Random{},
-////		&AlwaysCooperate{},
-////		&AlwaysDefect{},
-////		&Joss{},
-////		&Grudger{},
-////		&Pavlov{},
-////		&TesterStrat{},
-////		&SoftMajority{},
-////		&HardMajority{},
-////	}
-////
-////	rounds := 100
-////	results := make(map[string]int)
-////
-////	matchChan := make(chan struct {
-////		p1, p2         Strategy
-////		score1, score2 int
-////	})
-////
-////	roundWiseResults := make(chan struct {
-////		p1, p2                   Strategy
-////		scoresList1, scoresList2 []Move
-////	})
-////
-////	// GENAI START
-////	// Needed help to run the go routines
-////
-////	var wg sync.WaitGroup
-////
-////	go func() {
-////		for result := range matchChan {
-////			results[result.p1.Name()] += result.score1
-////			results[result.p2.Name()] += result.score2
-////		}
-////	}()
-////
-////	for i := 0; i < len(SubmittedStrategies); i++ {
-////		for j := i; j < len(SubmittedStrategies); j++ {
-////			wg.Add(1)
-////			go func(s1, s2 Strategy) {
-////				defer wg.Done()
-////				playMatch(s1, s2, rounds, matchChan, roundWiseResults)
-////			}(SubmittedStrategies[i], SubmittedStrategies[j])
-////		}
-////	}
-////
-////	wg.Wait()
-////	close(matchChan)
-////
-////	// GENAI END
-////
-////	//for i := 0; i < len(SubmittedStrategies); i++ {
-////	//	for j := i; j < len(SubmittedStrategies); j++ {
-////	//		go playMatch(SubmittedStrategies[i], SubmittedStrategies[j], rounds, matchChan)
-////	//	}
-////	//}
-////
-////	fmt.Println("Printing Results")
-////	for strategy, score := range results {
-////		fmt.Printf("%s: %d\n", strategy, score)
-////	}
-////	fmt.Println("End Of Results")
-////
-////}
-
-//func main() {
-//	SubmittedStrategies := []Strategy{
-//		&TitForTat{},
-//		&GenerousTitForTat{},
-//		&Random{},
-//		&AlwaysCooperate{},
-//		&AlwaysDefect{},
-//		&Joss{},
-//		&Grudger{},
-//		&Pavlov{},
-//		&TesterStrat{},
-//		&SoftMajority{},
-//		&HardMajority{},
-//	}
-//
-//	rounds := 200
-//	results := make(map[string]int)
-//	matchChan := make(chan struct {
-//		p1, p2         Strategy
-//		score1, score2 int
-//	})
-//	roundWiseResults := make(chan struct {
-//		p1, p2                   Strategy
-//		scoresList1, scoresList2 []Move
-//	})
-//
-//	go func() {
-//		for result := range matchChan {
-//			results[result.p1.Name()] += result.score1
-//			results[result.p2.Name()] += result.score2
-//		}
-//	}()
-//
-//	for i := 0; i < len(SubmittedStrategies); i++ {
-//		for j := i; j < len(SubmittedStrategies); j++ {
-//			go playMatch(SubmittedStrategies[i], SubmittedStrategies[j], rounds, matchChan, roundWiseResults)
-//		}
-//	}
-//
-//	time.Sleep(2 * time.Second) // Wait for goroutines to finish
-//	close(matchChan)
-//	close(roundWiseResults)
-//
-//	for strategy, score := range results {
-//		fmt.Printf("%s: %d\n", strategy, score)
-//	}
-//
-//	// Process and print round-wise results
-//	for result := range roundWiseResults {
-//		fmt.Printf("Match: %s VS %s\n", result.p1.Name(), result.p2.Name())
-//		fmt.Printf("Scores: %v VS %v\n", result.scoresList1, result.scoresList2)
-//	}
-//}
-//
-//func playMatch(strategy1 Strategy, strategy2 Strategy, rounds int, matchChan chan<- struct {
-//	p1, p2         Strategy
-//	score1, score2 int
-//}, roundWiseResults chan<- struct {
-//	p1, p2                   Strategy
-//	scoresList1, scoresList2 []Move
-//}) {
-//	var strat1History, strat2History []Move
-//	var strat1Score, strat2Score int
-//
-//	for i := 0; i < rounds; i++ {
-//		//fmt.Printf("In round %d of match %s VS %s\n", i, strategy1.Name(), strategy2.Name())
-//
-//		move1 := strategy1.Play(strat2History, strat1History)
-//		move2 := strategy2.Play(strat1History, strat2History)
-//		// function signature and calls have to match semantically
-//
-//		strat1History = append(strat1History, move1)
-//		strat2History = append(strat2History, move2)
-//
-//		if move1 == move2 {
-//			if move1 == Defect {
-//				// both parties Defected
-//				// both get 1 point each
-//				strat1Score = strat1Score + 1
-//				strat2Score = strat2Score + 1
-//			} else {
-//				// both parties Cooperated
-//				// both get 3 points each
-//				strat1Score = strat1Score + 3
-//				strat2Score = strat2Score + 3
-//
-//			}
-//		} else {
-//			// whoever Defects receives 5 points
-//			// whoever Cooperated receives 0 points
-//			if move1 == Defect {
-//				strat1Score = strat1Score + 5
-//			} else {
-//				strat2Score = strat2Score + 5
-//			}
-//		}
-//
-//	}
-//	roundWiseResults <- struct {
-//		p1, p2                   Strategy
-//		scoresList1, scoresList2 []Move
-//	}{strategy1, strategy2, strat1History, strat2History}
-//
-//	fmt.Printf("In %s VS %s: %d VS %d\n", strategy1.Name(), strategy2.Name(), strat1Score, strat2Score)
-//	matchChan <- struct {
-//		p1, p2         Strategy
-//		score1, score2 int
-//	}{strategy1, strategy2, strat1Score, strat2Score}
-//
-//}
 
 func main() {
 	SubmittedStrategies := []Strategy{
@@ -490,17 +321,21 @@ func main() {
 		&SoftMajority{},
 		&HardMajority{},
 	}
+	// list of strategies to run on this simulation
 
 	rounds := 200
 	results := make(map[string]int)
+
 	matchChan := make(chan struct {
 		p1, p2         Strategy
 		score1, score2 int
 	})
+	// to collect head to head performance. Help from ChatGPT
+
 	roundWiseResults := make(chan struct {
 		p1, p2                   Strategy
 		scoresList1, scoresList2 []Move
-	}, len(SubmittedStrategies)*len(SubmittedStrategies)) // Buffer size for channel
+	}, len(SubmittedStrategies)*len(SubmittedStrategies)) // Buffer size for channel. Code idea by ChatGPT
 
 	go func() {
 		for result := range matchChan {
@@ -522,10 +357,11 @@ func main() {
 		}
 	}
 
-	// Wait for all matches to complete (adjust sleep time as needed)
-	time.Sleep(10 * time.Second)
+	// Wait for all matches to complete
+	time.Sleep(6 * time.Second)
+	// Ensure this is closed after all matches are done or else causes errors
 	close(matchChan)
-	close(roundWiseResults) // Ensure this is closed after all matches are done
+	close(roundWiseResults)
 
 	// Print overall results
 	fmt.Println("\n\nOverall Results:")
@@ -533,11 +369,14 @@ func main() {
 		fmt.Printf("%s: %d\n", strategy, score)
 	}
 
+	// to group strategies
 	strategyClassification := make(map[string]int)
 	for i := range SubmittedStrategies {
 		strategyClassification[SubmittedStrategies[i].Name()] = SubmittedStrategies[i].Coop()
 	}
+	// to color code strategies as per cooperating, defecting and neutral
 	colorResults := colorMapper(strategyClassification)
+	// Visualize the results of the simulation
 	visResults(matchChan, roundWiseResults, results, colorResults)
 }
 
@@ -592,7 +431,7 @@ func playMatch(strategy1, strategy2 Strategy, rounds int, matchChan chan<- struc
 }
 
 func colorMapper(strats map[string]int) map[string]string {
-	// assuming cooperating strategies have True
+	// assuming cooperating strategies have green, neutral have yellow and defecting have red
 
 	colorResults := make(map[string]string)
 	for k, v := range strats {
@@ -605,70 +444,10 @@ func colorMapper(strats map[string]int) map[string]string {
 			colorResults[k] = yellowHexCode
 		}
 	}
+	// return the color map
 	return colorResults
 
 }
-
-//func visResults1(
-//	matchChan chan<- struct {
-//		p1, p2         Strategy
-//		score1, score2 int
-//	},
-//	roundWiseResults chan<- struct {
-//		p1, p2                   Strategy
-//		scoresList1, scoresList2 []Move
-//	},
-//	results map[string]int,
-//	colorResults map[string]string,
-//) {
-//	fmt.Println("Visualizing Results")
-//	dataPoints := make([]opts.BarData, 0)
-//	dataLabels := make([]string, 0)
-//
-//	//for strategy, score := range results {
-//	//	dataPoints = append(dataPoints, opts.BarData{Value: int32(score)})
-//	//	dataLabels = append(dataLabels, strategy)
-//	//}
-//
-//	for strategy, score := range results {
-//		color, exists := colorResults[strategy]
-//		if !exists {
-//			color = "#000000" // Default to black if no color is defined
-//		}
-//
-//		dataPoints = append(dataPoints, opts.BarData{
-//			Value: score,
-//			ItemStyle: &opts.ItemStyle{
-//				Color: color,
-//			},
-//		})
-//		dataLabels = append(dataLabels, strategy)
-//	}
-//
-//	bar := charts.NewBar()
-//	bar.SetGlobalOptions(charts.WithTitleOpts(opts.Title{
-//		Title:    "Prisoner's Dilemma",
-//		Subtitle: "Strategy Wise Performance",
-//	}),
-//		charts.WithXAxisOpts(opts.XAxis{
-//			AxisLabel: &opts.AxisLabel{
-//				Rotate: 45,
-//			},
-//		}),
-//	)
-//
-//	bar.SetXAxis(dataLabels).AddSeries("Strategies", dataPoints)
-//
-//	f, err := os.Create("myVis.html")
-//	if err != nil {
-//		panic(err)
-//	}
-//	bar.Render(f)
-//
-//	fmt.Println("Dummy Prints")
-//	fmt.Println(matchChan)
-//	fmt.Println(roundWiseResults)
-//}
 
 func visResults(
 	matchChan chan<- struct {
@@ -693,7 +472,8 @@ func visResults(
 	for strategy, score := range results {
 		color, exists := colorResults[strategy]
 		if !exists {
-			color = "#000000" // Default to black if no color is defined
+			color = "#000000"
+			// Default to black if no color is defined
 		}
 
 		dataLabels = append(dataLabels, strategy)
@@ -708,15 +488,15 @@ func visResults(
 		switch color {
 		case "#00FF00": // Green
 			greenSeries = append(greenSeries, barData)
-			redSeries = append(redSeries, opts.BarData{}) // Add empty data to maintain alignment
+			redSeries = append(redSeries, opts.BarData{}) // Add empty data to maintain alignment. ChatGPT idea
 			yellowSeries = append(yellowSeries, opts.BarData{})
 		case "#FF0000": // Red
 			redSeries = append(redSeries, barData)
-			greenSeries = append(greenSeries, opts.BarData{}) // Add empty data to maintain alignment
+			greenSeries = append(greenSeries, opts.BarData{}) // Add empty data to maintain alignment. ChatGPT idea
 			yellowSeries = append(yellowSeries, opts.BarData{})
 		case "#FFFF00": // Yellow
 			yellowSeries = append(yellowSeries, barData)
-			greenSeries = append(greenSeries, opts.BarData{}) // Add empty data to maintain alignment
+			greenSeries = append(greenSeries, opts.BarData{}) // Add empty data to maintain alignment. ChatGPT idea
 			redSeries = append(redSeries, opts.BarData{})
 		default:
 			greenSeries = append(greenSeries, opts.BarData{})
@@ -737,12 +517,14 @@ func visResults(
 			},
 		}),
 	)
+	// Rotate the x-axis labels by 45 degrees to ensure they are completely visible
 
 	// Add series to the bar chart
 	bar.SetXAxis(dataLabels).
 		AddSeries("Cooperating Strategies", greenSeries, charts.WithItemStyleOpts(opts.ItemStyle{Color: greenHexCode})).
 		AddSeries("Defecting Strategies", redSeries, charts.WithItemStyleOpts(opts.ItemStyle{Color: redHexCode})).
 		AddSeries("Neutral Strategies", yellowSeries, charts.WithItemStyleOpts(opts.ItemStyle{Color: yellowHexCode}))
+	// WithItemStyleOpts is important for the legend colors to match. ChatGPT idea
 
 	f, err := os.Create("myVis.html")
 	if err != nil {
@@ -751,6 +533,7 @@ func visResults(
 	bar.Render(f)
 
 	fmt.Println("Dummy Prints")
+	// to satisfy go compiler
 	fmt.Println(matchChan)
 	fmt.Println(roundWiseResults)
 }
