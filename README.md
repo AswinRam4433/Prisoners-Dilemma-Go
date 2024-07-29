@@ -59,6 +59,8 @@ go run main.go
 
 ## Results
 After running the simulation, results for each strategy are printed, showing the total scores. Round-wise results for each match are also printed, showing the history of moves and scores for each round.
+![Sample Visualization Of Results Using go-charts](https://github.com/user-attachments/assets/c2ce486e-479f-435c-8536-a6120872dd43)
+
 
 ## Contributing
 Feel free to contribute by creating issues, submitting pull requests, or suggesting improvements.
