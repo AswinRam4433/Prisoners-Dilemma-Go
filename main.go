@@ -2,8 +2,11 @@ package main
 
 import (
 	"fmt"
+	"github.com/go-echarts/go-echarts/v2/charts"
+	"github.com/go-echarts/go-echarts/v2/opts"
 	"math"
 	"math/rand"
+	"os"
 	"time"
 )
 
@@ -489,6 +492,12 @@ func main() {
 	for strategy, score := range results {
 		fmt.Printf("%s: %d\n", strategy, score)
 	}
+	strategyClassification := make(map[string]bool)
+	for i := range SubmittedStrategies {
+		strategyClassification[SubmittedStrategies[i].Name()] = true
+	}
+	colorResults := colorMapper(strategyClassification)
+	visResults(matchChan, roundWiseResults, results, colorResults)
 }
 
 func playMatch(strategy1, strategy2 Strategy, rounds int, matchChan chan<- struct {
@@ -539,4 +548,80 @@ func playMatch(strategy1, strategy2 Strategy, rounds int, matchChan chan<- struc
 		p1, p2         Strategy
 		score1, score2 int
 	}{strategy1, strategy2, strat1Score, strat2Score}
+}
+
+func colorMapper(strats map[string]bool) map[string]string {
+	// assuming cooperating strategies have True
+	greenHexCode := "#00FF00"
+	redHexCode := "#FF0000"
+	colorResults := make(map[string]string)
+	for k, v := range strats {
+		if v == true {
+			colorResults[k] = greenHexCode
+
+		} else {
+			colorResults[k] = redHexCode
+		}
+	}
+	return colorResults
+
+}
+func visResults(
+	matchChan chan<- struct {
+		p1, p2         Strategy
+		score1, score2 int
+	},
+	roundWiseResults chan<- struct {
+		p1, p2                   Strategy
+		scoresList1, scoresList2 []Move
+	},
+	results map[string]int,
+	colorResults map[string]string,
+) {
+	fmt.Println("Visualizing Results")
+	dataPoints := make([]opts.BarData, 0)
+	dataLabels := make([]string, 0)
+
+	//for strategy, score := range results {
+	//	dataPoints = append(dataPoints, opts.BarData{Value: int32(score)})
+	//	dataLabels = append(dataLabels, strategy)
+	//}
+
+	for strategy, score := range results {
+		color, exists := colorResults[strategy]
+		if !exists {
+			color = "#000000" // Default to black if no color is defined
+		}
+
+		dataPoints = append(dataPoints, opts.BarData{
+			Value: score,
+			ItemStyle: &opts.ItemStyle{
+				Color: color,
+			},
+		})
+		dataLabels = append(dataLabels, strategy)
+	}
+
+	bar := charts.NewBar()
+	bar.SetGlobalOptions(charts.WithTitleOpts(opts.Title{
+		Title:    "Prisoner's Dilemma",
+		Subtitle: "Strategy Wise Performance",
+	}),
+		charts.WithXAxisOpts(opts.XAxis{
+			AxisLabel: &opts.AxisLabel{
+				Rotate: 45,
+			},
+		}))
+
+	bar.SetXAxis(dataLabels).AddSeries("Strategies", dataPoints)
+
+	f, err := os.Create("myVis.html")
+	if err != nil {
+		panic(err)
+	}
+	bar.Render(f)
+
+	fmt.Println("Dummy Prints")
+	fmt.Println(matchChan)
+	fmt.Println(roundWiseResults)
 }
